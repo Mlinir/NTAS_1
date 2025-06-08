@@ -1,0 +1,31 @@
+Zadatak seminarskog rada je zadan u Jupyter bilježnici. Potrebno je napraviti ispitno okruženje za svaki zadatak te prikazati i komentirati rezultate sukladno zahtjevima zadatka.
+
+Rješenje zadatka u Jupyter bilježnici ili bilo kojem drugom ekvivalentnom obliku prema zadanom sadržaju treba predati kao datoteku pod nazivom SEM1_TIMx (x- broj tima) u LMS predmeta. Napomena: Tim koji će koristiti neki drugi programski jezik umjesto Pythona i Jupyter Notebook okruženja rješenje s opisima može predati u posebnoj datoteci kao Word dokument prema predlošku i sadržaju zadanom u Jupyter bilježnici.
+
+Dokument s rješenjima predaje voditelj tima. U seminaru moraju biti navedeni svi članovi tima s navodom dijela zadatka koji je pojedini član obradio.  
+ 
+Rješenje zadatka predati do 10. lipnja 2025. u 23:59 u LMS sustav. 
+Seminarski rad nosi 15 bodova za dokumentaciju i 5 bodova za prezentaciju koju se može održati u zadnjem terminu laboratorijskih vježbi.
+
+PODATKOVNI SKUP
+Timovi mogu koristiti podatkovni skup zadan u priloženoj datoteci movie.txt ili predložiti vlastiti podatkovni skup na kojem će raditi implementaciju.
+Za slučaj vlastitog podatkovnog skupa voditelj tima se treba javiti nastavniku e-poštom s prijedlogom istog i navodom točnog izvora odakle su podatci uzeti i gdje treba biti:
+-    najmanje 50,000 zapisa,
+-    svaki zapis treba imati najmanje tri polja (podatka),
+-    indeksni ključ po kojem se gradi stablo treba biti tekstualan.
+U slučaju da se predloženi podatkovni skup odobri broj mogućih bodova iz seminarskog rada se povećava za 3 boda, s time da se ukupni mogući broj bodova studenata na predmetu i dalje ograničava na 100 bodova.
+
+Za timove koje rade s podatkovnim skupom koji je priložen u datoteci movie.txt podatkovni skupovi se razlikuju između timova po izabranom podskupu zapisa za obradu iz datoteke. To znači da timovi trebaju koristiti podatke učitavanjem sljedećih redaka iz datoteke:
+
+TIM01: svaki jedanaesti redak počevši od prvog retka
+TIM02: svaki jedanaesti redak počevši od drugog retka
+TIM03: svaki jedanaesti redak počevši od trećeg retka
+TIM04: svaki jedanaesti redak počevši od četvrtog retka
+TIM05: svaki jedanaesti redak počevši od petog retka
+TIM06: svaki jedanaesti redak počevši od šestog retka
+TIM07: svaki jedanaesti redak počevši od sedmog retka
+TIM08: svaki jedanaesti redak počevši od osmog retka
+TIM09: svaki jedanaesti redak počevši od devetog retka
+TIM10: svaki jedanaesti redak počevši od desetog retka
+TIM11: svaki jedanaesti redak počevši od jedanaestog retka
+
