@@ -271,7 +271,7 @@ while info:
     print("g) Usporedba visine nebalansiranog i AVL stabla")
     print("0) Izlaz")
     
-    info = input("Kaj bi hteli: ").strip().lower()
+    info = input("Odaberi: ").strip().lower()
     
     match info:
         case "a":
