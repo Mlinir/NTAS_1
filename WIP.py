@@ -1,6 +1,7 @@
 import random
 from collections import deque
 
+
 class MoviesData:
     def __init__(self, movie_id, short_title, long_title):
         self.movie_id = int(movie_id)
@@ -8,7 +9,11 @@ class MoviesData:
         self.long_title = long_title.strip()
 
     def __repr__(self):
-        return f"ID: {self.movie_id}, Short: '{self.short_title}', Long: '{self.long_title}'"
+        return (
+            f"ID: {self.movie_id}, "
+            f"Short: '{self.short_title}', "
+            f"Long: '{self.long_title}'"
+        )
 
 
 class BinaryNode:
@@ -19,9 +24,9 @@ class BinaryNode:
         self.height = 0
 
     def update_height(self):
-        left_height = self.left.height if self.left else -1
-        right_height = self.right.height if self.right else -1
-        self.height = 1 + max(left_height, right_height)
+        left_h = self.left.height if self.left else -1
+        right_h = self.right.height if self.right else -1
+        self.height = 1 + max(left_h, right_h)
 
 
 class MovieNode(BinaryNode):
@@ -44,27 +49,31 @@ class BinaryTree:
                 node.left = insert(node.left, data)
             elif data.short_title > node.value:
                 node.right = insert(node.right, data)
+
             node.update_height()
             return self.balance(node)
 
         self.root = insert(self.root, movie_data)
 
     def balance(self, node):
-        balance_factor = self.get_balance(node)
-        if balance_factor > 1:
+        bf = self.get_balance(node)
+
+        if bf > 1:
             if self.get_balance(node.left) < 0:
                 node.left = self.rotate_left(node.left)
             return self.rotate_right(node)
-        if balance_factor < -1:
+
+        if bf < -1:
             if self.get_balance(node.right) > 0:
                 node.right = self.rotate_right(node.right)
             return self.rotate_left(node)
+
         return node
 
     def get_balance(self, node):
-        left = node.left.height if node.left else -1
-        right = node.right.height if node.right else -1
-        return left - right
+        left_h = node.left.height if node.left else -1
+        right_h = node.right.height if node.right else -1
+        return left_h - right_h
 
     def rotate_left(self, z):
         self.left_rotations += 1
@@ -87,29 +96,30 @@ class BinaryTree:
     def height(self):
         return self.root.height if self.root else -1
 
-    def assertAVLProperty(self):
+    def assert_avl_property(self):
         def check(node):
-            if not node:
+            if node is None:
                 return True
-            balance = self.get_balance(node)
-            if abs(balance) > 1:
+            if abs(self.get_balance(node)) > 1:
                 return False
             return check(node.left) and check(node.right)
+
         return check(self.root)
 
     def search(self, pattern):
         results = []
 
         def dfs(node):
-            if not node:
+            if node is None:
                 return
+
             if pattern.endswith("*"):
                 prefix = pattern[:-1]
                 if node.value.startswith(prefix):
                     results.append(node.movie_data)
-                if prefix <= node.value:
+                if node.value >= prefix:
                     dfs(node.left)
-                if prefix >= node.value:
+                if not node.value.startswith(prefix) or len(node.value) > len(prefix):
                     dfs(node.right)
             else:
                 if node.value == pattern:
@@ -124,15 +134,17 @@ class BinaryTree:
 
     def range_search(self, start_pattern, end_pattern):
         results = []
+        start_pref = start_pattern[:-1] if start_pattern.endswith("*") else start_pattern
+        end_pref = end_pattern[:-1] if end_pattern.endswith("*") else end_pattern
 
         def dfs(node):
-            if not node:
+            if node is None:
                 return
-            if start_pattern[:-1] <= node.value <= end_pattern[:-1] + 'z':
+            if start_pref <= node.value <= end_pref:
                 results.append(node.movie_data)
-            if start_pattern[:-1] <= node.value:
+            if node.value > start_pref:
                 dfs(node.left)
-            if node.value <= end_pattern[:-1] + 'z':
+            if node.value < end_pref:
                 dfs(node.right)
 
         dfs(self.root)
@@ -154,35 +166,32 @@ class BinaryTree:
         print(f"Lijeve rotacije: {self.left_rotations}")
         print(f"Desne rotacije: {self.right_rotations}")
 
-    def zigzag_level_order(self, max_levels=3):
+    def zigzag_level_order(self, max_levels=10):
         if not self.root:
             return
-        result = []
-        current_level = deque([self.root])
+    
+        current_level = [self.root]
         left_to_right = True
         level = 0
-
+    
         while current_level and level < max_levels:
-            level_size = len(current_level)
-            level_nodes = []
-
-            for _ in range(level_size):
-                if left_to_right:
-                    node = current_level.popleft()
-                    level_nodes.append(node.value)
-                    if node.left:
-                        current_level.append(node.left)
-                    if node.right:
-                        current_level.append(node.right)
-                else:
-                    node = current_level.pop()
-                    level_nodes.append(node.value)
-                    if node.right:
-                        current_level.appendleft(node.right)
-                    if node.left:
-                        current_level.appendleft(node.left)
-
-            print(" ".join(level_nodes))
+            level_values = []
+            next_level = []
+        
+            for node in current_level:
+                level_values.append(str(node.movie_data.movie_id))
+            
+                if node.left:
+                    next_level.append(node.left)
+                if node.right:
+                    next_level.append(node.right)
+        
+            if left_to_right:
+                print(" ".join(level_values))
+            else:
+                print(" ".join(reversed(level_values)))
+        
+            current_level = next_level
             left_to_right = not left_to_right
             level += 1
 
@@ -204,63 +213,76 @@ class UnbalancedTree:
         self.root = insert(self.root, movie_data)
 
     def height(self):
-        def compute_height(node):
-            if not node:
+        def compute_h(node):
+            if node is None:
                 return -1
-            return 1 + max(compute_height(node.left), compute_height(node.right))
-        return compute_height(self.root)
+            return 1 + max(compute_h(node.left), compute_h(node.right))
+
+        return compute_h(self.root)
 
 
-# === Glavni program ===
+if __name__ == "__main__":
+    filmovi_tim07 = []
 
-filmovi_tim07 = []
+    try:
+        with open("movie.txt", encoding="windows-1250") as f:
+            for i, line in enumerate(f):
+                if i >= 6 and (i - 6) % 11 == 0:
+                    parts = line.strip().split("\t")
+                    if len(parts) >= 3:
+                        filmovi_tim07.append(MoviesData(*parts[:3]))
+    except FileNotFoundError:
+        print("movie.txt nije pronađena, koristim test podatke.")
+        test_data = [
+            ("1", "Avatar", "Avatar (2009)"),
+            ("2", "Bug", "Bug Life (1998)"),
+            ("3", "Cars", "Cars (2006)"),
+            ("4", "Dune", "Dune (2021)"),
+            ("5", "Elf", "Elf (2003)"),
+            ("6", "Frozen", "Frozen (2013)"),
+            ("7", "Ghost", "Ghost (1990)"),
+            ("8", "Heat", "Heat (1995)"),
+            ("9", "Ice Age", "Ice Age (2002)"),
+            ("10", "Jaws", "Jaws (1975)"),
+        ]
+        for mid, s, l in test_data:
+            filmovi_tim07.append(MoviesData(mid, s, l))
 
-with open("movie.txt", encoding="windows-1250") as file:
-    for i, line in enumerate(file):
-        if i >= 6 and (i - 6) % 11 == 0:
-            parts = line.strip().split("\t")
-            if len(parts) >= 3:
-                film = MoviesData(parts[0], parts[1], parts[2])
-                filmovi_tim07.append(film)
+    print(f"TIM07 - Učitano {len(filmovi_tim07)} filmova")
 
-print(f"TIM07 - Učitano {len(filmovi_tim07)} filmova")
+    stablo = BinaryTree()
+    for film in filmovi_tim07:
+        stablo.add(film)
 
-# Stvaranje AVL stabla
-stablo = BinaryTree()
-for film in filmovi_tim07:
-    stablo.add(film)
+    print(f"Visina AVL stabla: {stablo.height()}")
+    print(f"AVL svojstvo zadovoljava: {stablo.assert_avl_property()}")
+    stablo.print_rotation_counts()
 
-print(f"Visina AVL stabla: {stablo.height()}")
-print(f"AVL svojstvo zadovoljava: {stablo.assertAVLProperty()}")
-stablo.print_rotation_counts()
+    print("\nZig-zag ispis razina:")
+    stablo.zigzag_level_order()
 
-print("\nZig-zag ispis razina:")
-stablo.zigzag_level_order()
+    print("\nMinimalni film:", stablo.find_min())
+    print("Maksimalni film:", stablo.find_max())
 
-print("\nMinimalni film:", stablo.find_min())
-print("Maksimalni film:", stablo.find_max())
+    print("\nPretraga za 'Bug*':", stablo.search("Bug*"))
+    print("Pretraga u rangu 'F*' do 'M*':", stablo.range_search("F*", "M*"))
 
-# Pretraživanje primjera
-print("\nPretraga za 'Bug*':", stablo.search("Bug*"))
-print("Pretraga u rangu 'F*' do 'M*':", stablo.range_search("F*", "M*"))
+    random.shuffle(filmovi_tim07)
+    ubt = UnbalancedTree()
+    for film in filmovi_tim07:
+        ubt.add(film)
 
-# Usporedba sa nebalansiranim stablom
-random.shuffle(filmovi_tim07)
-ubt = UnbalancedTree()
-for film in filmovi_tim07:
-    ubt.add(film)
+    print(f"\nVisina običnog BST: {ubt.height()}")
 
-print(f"\nVisina običnog BST: {ubt.height()}")
+    avl_random = BinaryTree()
+    for film in filmovi_tim07:
+        avl_random.add(film)
 
-# AVL sa istim podacima
-avl_random = BinaryTree()
-for film in filmovi_tim07:
-    avl_random.add(film)
+    print(f"Visina AVL stabla za isti niz: {avl_random.height()}")
 
-print(f"Visina AVL stabla za isti niz: {avl_random.height()}")
 
-info = 1
-while info:
+running = True
+while running:
     print("\n=== IZBORNIK ===")
     print("a) Ispiši visinu dobivenog AVL stabla.")
     print("b) Pretraživanje podataka o filmu (koristi * za nepotpun naslov)")
@@ -271,9 +293,9 @@ while info:
     print("g) Usporedba visine nebalansiranog i AVL stabla")
     print("0) Izlaz")
     
-    info = input("Odaberi: ").strip().lower()
+    choice = input("Odaberi: ").strip().lower()
     
-    match info:
+    match choice:
         case "a":
             print(f"Visina AVL stabla je: {stablo.height()}")
         case "b":
@@ -301,7 +323,6 @@ while info:
             print("Zig-zag ispis prvih 10 razina:")
             stablo.zigzag_level_order()
         case "g":
-            # Ponovno koristi isti niz zapisa
             random.shuffle(filmovi_tim07)
             ubt = UnbalancedTree()
             avl = BinaryTree()
@@ -312,6 +333,6 @@ while info:
             print("Visina AVL stabla:", avl.height())
         case "0":
             print("Izlaz iz programa.")
-            break
+            running = False
         case _:
             print("Nepoznata opcija, pokušajte ponovno.")
